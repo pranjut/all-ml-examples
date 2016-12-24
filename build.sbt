@@ -1,19 +1,33 @@
-name := """scala-decision-tree"""
+import Dependencies._
+import CommonSettings._
+
+name := """all-ml-examples"""
 
 version := "1.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := scala
 
-// Change this to another test framework if you prefer
-libraryDependencies ++= Seq(
+lazy val root = (
+  project.in(file("."))
+    aggregate(dtSparkDefaultExample)
+  )
 
-  "org.apache.spark" % "spark-mllib_2.11" % "2.0.2"
-)
+
+lazy val dtSparkDefaultExample = (
+  BaseProject("dt-spark-default-example")
+    settings (libraryDependencies += sparkMlLib)
+  )
+
+lazy val dtWeatherForPlay = (
+  BaseProject("dt-weather-for-play")
+    settings (libraryDependencies += sparkMlLib)
+  )
+
 
 // Uncomment to use Akka
 //libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.11"
 
-resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+//resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
 
 //libraryDependencies += "com.github.mandar2812.DynaML" % "dynaml-core_2.11" % "v1.4.1-beta.6"
 //

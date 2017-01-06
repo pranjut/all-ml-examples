@@ -10,6 +10,8 @@ object Dependencies {
 
   val sparkMlLib = "org.apache.spark" % "spark-mllib_2.11" % "2.0.2"
 
+  val breeze = "org.scalanlp" %% "breeze" % "0.12"
+
   val mlLibDependencies: Seq[ModuleID] = Seq(
     sparkMlLib
   )

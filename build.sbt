@@ -18,9 +18,9 @@ lazy val dtSparkDefaultExample = (
     settings (libraryDependencies += sparkMlLib)
   )
 
-lazy val dtWeatherForPlay = (
-  BaseProject("dt-weather-for-play")
-    settings (libraryDependencies += sparkMlLib)
+lazy val dtPOSO = (
+  BaseProject("dt-poso")
+    settings (libraryDependencies += breeze)
   )
 
 

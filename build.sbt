@@ -9,7 +9,7 @@ scalaVersion := scala
 
 lazy val root = (
   project.in(file("."))
-    aggregate(dtSparkDefaultExample)
+    aggregate(annScala)
   )
 
 
@@ -20,7 +20,12 @@ lazy val dtSparkDefaultExample = (
 
 lazy val dtPOSO = (
   BaseProject("dt-poso")
-    settings (libraryDependencies += breeze)
+    settings (libraryDependencies ++= breeze)
+  )
+
+lazy val annScala = (
+  BaseProject("ann-scala")
+    settings (libraryDependencies ++= breeze ++ Seq(scalaTest, mockito))
   )
 
 

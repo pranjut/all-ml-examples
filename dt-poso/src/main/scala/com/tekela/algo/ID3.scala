@@ -1,43 +1,54 @@
 package com.tekela.algo
 
 import breeze.linalg.DenseMatrix
-import com.tekela.dto.Attribute
+import com.tekela.dto.{Examples, Attribute}
 
 class ID3 {
 
   def train(examples: DenseMatrix, targetAttributes: DenseMatrix): Unit = {
 
     val numberOfCols = examples.cols
-
     val attributes: List[Attribute] = (0 to numberOfCols).toList.map {
       col =>
-        examples(::, col)
-        Attribute(examples(0, col).toString, examples(::, col).toArray.toList, col)
+        Attribute(examples(0, col).toString, examples(::, col).toArray.toList.tail, col)
     }
+
+    val bestAttCol: Int = findBestAttribute(examples, targetAttributes)
+
+    val root = Attribute(examples(0, bestAttCol).toString, examples(::, bestAttCol).toArray.toList.tail, bestAttCol)
 
 
   }
 
+
+
+  def findBestAttribute(examples: DenseMatrix, targetAttributes: DenseMatrix): Int = {
+    val numberOfCols = examples.cols
+    (0 to numberOfCols-1).toList.map {
+      col => (calculateGain(examples, targetAttributes, col), col)
+    }.sortBy(_._1).lastOption.map(_._2).getOrElse(throw IllegalArgumentException)
+  }
+
   /**
    * Gain stands for information gain. which is used for calculating the root node as well, partition of later nodes.
-   *The formula for gain is Entropy(s) - v E {Weak, Strong} M |Sv|/|S|Entropy(Sv). Here Sigma symbol is unavailable so
+   *The formula for gain is: Entropy(s) - v E {Weak, Strong} M |Sv|/|S|Entropy(Sv). Here Sigma symbol is unavailable so
    * writing like this. basically it goes like this. v belongs to {Weak and Strong}, M denotes the sigma symbol, then Rest
    * of the function is understandable I guess
    * @param attributes
    * @param targetAttributes
    * @param attributeInMatrix
    */
-  def gain(attributes: DenseMatrix, targetAttributes: DenseMatrix, attributeInMatrix: Int) = {
-    val tgAttribs = targetAttributes(::, 0).toArray.toList
+  def calculateGain(attributes: DenseMatrix, targetAttributes: DenseMatrix, attributeInMatrix: Int) = {
+    val tgAttribs = targetAttributes(::, 0).toArray.toList.tail
     val results = tgAttribs.distinct
     val (resPositive, resNegative) = tgAttribs.partition(attr => attr == results.head)
     val totalRes = resPositive.size + resNegative.size
     val entropyS = calculateEntropy(resPositive.size, resNegative.size)
 
-    val attribs = attributes(::, attributeInMatrix).toArray.toList
+    val attribs = attributes(::, attributeInMatrix).toArray.toList.tail
     val attribsTgsMap = (attribs zip tgAttribs).groupBy(_._1)
 
-    // As we have to calculate Sigma, we are already calculating the functionn inside of it. i.e. we calculate the entropy
+    // As we have to calculate Sigma, we are already calculating the function inside of it. i.e. we calculate the entropy
     //for each attribute, as well as the portion of total attribute results / total results
     val gainSigmaElements = attribsTgsMap.map{
       case (att, attTgZip) =>
